@@ -1,0 +1,3 @@
+[submodule "YelpDemo"]
+	path = YelpDemo
+	url = https://github.com/dcarroll/YelpDemo
