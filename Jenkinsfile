@@ -12,17 +12,43 @@ pipeline {
         stage('AUTHORIZING') {
             steps {
                 sh '''
-                    echo ${HUB_ORG}
-                    echo $CONNECTED_APP_CONSUMER_KEY
                     export SFDX_USE_GENERIC_UNIX_KEYCHAIN=true
                     /usr/local/lib/sfdx/bin/sfdx force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername -a DevHub
-                 
-                    /usr/local/lib/sfdx/bin/sfdx force:org:create -s -f config/project-scratch-def.json -a testScratchOrg
+                 '''
+            }
+        }
+        // stage('CREATING SCRATCH ORG') {
+        //     steps {
+        //         sh '''
+        //            /usr/local/lib/sfdx/bin/sfdx force:org:create -s -f config/project-scratch-def.json -a testScratchOrg
 
-                    /usr/local/lib/sfdx/bin/sfdx force:org:display -u testScratchOrg
-                    /usr/local/lib/sfdx/bin/sfdx force:source:push -u testScratchOrg
-                    /usr/local/lib/sfdx/bin/sfdx force:apex:test:run -u testScratchOrg --wait 10
-                    /usr/local/lib/sfdx/bin/sfdx force:org:delete -u testScratchOrg -p
+        //             /usr/local/lib/sfdx/bin/sfdx force:org:display -u testScratchOrg
+        //             /usr/local/lib/sfdx/bin/sfdx force:source:push -u testScratchOrg
+        //             /usr/local/lib/sfdx/bin/sfdx force:apex:test:run -u testScratchOrg --wait 10
+        //             /usr/local/lib/sfdx/bin/sfdx force:org:delete -u testScratchOrg -p
+        //          '''
+        //     }
+        // }
+        // stage('RUNNING APEX TESTS') {
+        //     steps {
+        //         sh '''
+        //             /usr/local/lib/sfdx/bin/sfdx force:apex:test:run -u testScratchOrg --wait 10
+        //          '''
+        //     }
+        // }
+        // stage('DELETING SCRATCH ORG') {
+        //     steps {
+        //         sh '''
+        //             /usr/local/lib/sfdx/bin/sfdx force:org:delete -u testScratchOrg -p
+        //          '''
+        //     }
+        // }
+        stage('DEPLOY') {
+            steps {
+                sh '''
+                    /usr/local/lib/sfdx/bin/sfdx force:source:convert -r force-app -d deploy
+                    /usr/local/lib/sfdx/bin/sfdx force:mdapi:deploy -d deploy -u DevHub
+                    /usr/local/lib/sfdx/bin/sfdx force:mdapi:deploy:report
                  '''
             }
         }
