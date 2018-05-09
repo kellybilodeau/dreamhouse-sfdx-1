@@ -47,7 +47,7 @@ pipeline {
             steps {
                 sh '''
                     /usr/local/lib/sfdx/bin/sfdx force:source:convert -r force-app -d deploy
-                    /usr/local/lib/sfdx/bin/sfdx force:mdapi:deploy -d deploy -u DevHub
+                    /usr/local/lib/sfdx/bin/sfdx force:mdapi:deploy -d /Users/Shared/Jenkins/Home/workspace/test-pipeline/deploy -u DevHub
                     /usr/local/lib/sfdx/bin/sfdx force:mdapi:deploy:report
                  '''
             }
