@@ -6,6 +6,7 @@ pipeline {
         HUB_ORG="${env.HUB_ORG_DH}"
         CONNECTED_APP_CONSUMER_KEY="${env.CONNECTED_APP_CONSUMER_KEY_DH}"
         jwt_key_file = credentials('git-jenkins-sfdx-test')
+        workspace="${workspace}"
     }
 
     stages {
@@ -47,7 +48,7 @@ pipeline {
             steps {
                 sh '''
                     /usr/local/lib/sfdx/bin/sfdx force:source:convert -r force-app -d deploy
-                    /usr/local/lib/sfdx/bin/sfdx force:mdapi:deploy -d /Users/Shared/Jenkins/Home/workspace/test-pipeline/deploy -u DevHub
+                    /usr/local/lib/sfdx/bin/sfdx force:mdapi:deploy -d ${workspace}/test-pipeline/deploy -u DevHub
                     /usr/local/lib/sfdx/bin/sfdx force:mdapi:deploy:report
                  '''
             }
